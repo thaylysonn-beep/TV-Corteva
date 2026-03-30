@@ -18,34 +18,17 @@
       overflow: hidden;
     }
 
-    .container {
-      position: relative;
+    video {
       width: 100%;
       height: 100%;
-    }
-
-    .bg-video {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .main-video {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      z-index: 2;
+      object-fit: cover; /* preenche a tela 16:9 */
     }
   </style>
 </head>
 
 <body>
-  <div class="container">
-    <video id="bg" class="bg-video" muted playsinline></video>
-    <video id="main" class="main-video" muted playsinline></video>
-  </div>
+
+  <video id="player" muted playsinline></video>
 
   <script>
     const videos = [
@@ -55,36 +38,29 @@
     ];
 
     let indice = 0;
+    const player = document.getElementById("player");
 
-    const bg = document.getElementById("bg");
-    const main = document.getElementById("main");
-
-    function trocarVideo() {
+    function tocarVideo() {
       const src = videos[indice] + "?v=" + Date.now();
-
-      bg.src = src;
-      main.src = src;
-
-      bg.currentTime = 0;
-      main.currentTime = 0;
-
-      bg.play().catch(()=>{});
-      main.play().catch(()=>{});
+      player.src = src;
+      player.currentTime = 0;
+      player.play().catch(()=>{});
     }
 
-    main.addEventListener("ended", () => {
+    player.addEventListener("ended", () => {
       indice = (indice + 1) % videos.length;
-      trocarVideo();
+      tocarVideo();
     });
 
-    // Inicia
-    trocarVideo();
+    // inicia
+    tocarVideo();
 
-    // 🔁 AUTO-ATUALIZAÇÃO DA PÁGINA (a cada 10 minutos)
+    // 🔁 Atualiza a página automaticamente (10 minutos)
     setInterval(() => {
       location.reload(true);
     }, 10 * 60 * 1000);
   </script>
+
 </body>
 </html>
 ``
