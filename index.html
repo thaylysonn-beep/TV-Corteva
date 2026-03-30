@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>TV Institucional</title>
 
-  <!-- FORÇAR ATUALIZAÇÃO (ANTI-CACHE) -->
+  <!-- Anti-cache -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -19,40 +19,41 @@
       overflow: hidden;
     }
 
-    /* Container do vídeo */
+    /* Área do vídeo */
     #videoContainer {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
-      height: calc(100% - 70px); /* espaço da faixa */
+      height: calc(100% - 70px);
     }
 
     video {
       width: 100%;
       height: 100%;
       object-fit: contain;
+      display: block;
     }
 
-    /* Faixa de clima */
-   #weatherBar {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 70px;
-  background: #0b3a6e;
-  overflow: hidden; /* MUITO IMPORTANTE */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+    /* Faixa do clima */
+    #weatherBar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 70px;
+      background: #0b3a6e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
 
-#weatherBar img {
-  height: 70px;     /* força altura exata */
-  width: auto;
-  display: block;
-}
+    #weatherBar img {
+      height: 70px;
+      width: auto;
+      display: block;
+    }
   </style>
 </head>
 
@@ -63,12 +64,17 @@
     <video id="player" autoplay muted playsinline></video>
   </div>
 
-  <!-- Faixa de previsão do tempo -->
+  <!-- Faixa clima -->
   <div id="weatherBar">
     <img 
-      src="https://wttr.in/Cosmópolis.png?format=%c+%t+%C&lang=pt"
+      src="https://wttr.in/Cosmópolis.png?format=%c+%t&lang=pt"
       alt="Previsão do tempo"
-"video1.mp4",
+    >
+  </div>
+
+  <script>
+    const videos = [
+      "video1.mp4",
       "video2.mp4"
     ];
 
@@ -76,13 +82,13 @@
     const player = document.getElementById("player");
 
     function videoComTimestamp(video) {
-      return video + "?v=" + new Date().getTime();
+      return video + "?v=" + Date.now();
     }
 
     function tocarVideo() {
       player.src = videoComTimestamp(videos[indice]);
-      player.load();
-      player.play().catch(()=>{});
+      player.currentTime = 0;
+      player.play().catch(() => {});
     }
 
     player.addEventListener("ended", () => {
@@ -90,6 +96,7 @@
       tocarVideo();
     });
 
+    // Inicia
     tocarVideo();
   </script>
 
