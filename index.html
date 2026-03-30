@@ -19,20 +19,61 @@
       overflow: hidden;
     }
 
+    /* Container do vídeo */
+    #videoContainer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: calc(100% - 70px); /* espaço da faixa */
+    }
+
     video {
       width: 100%;
       height: 100%;
       object-fit: contain;
+    }
+
+    /* Faixa de clima */
+    #weatherBar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 70px;
+      background: #0b3a6e;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+
+    #weatherBar iframe {
+      border: none;
+      width: 100%;
+      height: 100%;
     }
   </style>
 </head>
 
 <body>
 
-  <video id="player" autoplay muted playsinline></video>
+  <!-- Vídeo -->
+  <div id="videoContainer">
+    <video id="player" autoplay muted playsinline></video>
+  </div>
+
+  <!-- Faixa de previsão do tempo -->
+  <div id="weatherBar">
+    <iframe 
+      src="https://wttr.in/Cosmópolis?format=%c+%t+%C&lang=pt"
+      scrolling="no">
+    </iframe>
+  </div>
 
   <script>
-    // Lista de vídeos
     const videos = [
       "video1.mp4",
       "video2.mp4"
@@ -41,7 +82,6 @@
     let indice = 0;
     const player = document.getElementById("player");
 
-    // Força atualização do vídeo (anti-cache)
     function videoComTimestamp(video) {
       return video + "?v=" + new Date().getTime();
     }
@@ -49,16 +89,17 @@
     function tocarVideo() {
       player.src = videoComTimestamp(videos[indice]);
       player.load();
-      player.play();
+      player.play().catch(()=>{});
     }
 
-    player.onended = () => {
+    player.addEventListener("ended", () => {
       indice = (indice + 1) % videos.length;
       tocarVideo();
-    };
+    });
 
     tocarVideo();
   </script>
 
 </body>
 </html>
+``
