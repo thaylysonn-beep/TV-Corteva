@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>TV Institucional</title>
 
-  <!-- Anti-cache (fundamental para TV Samsung atualizar sempre) -->
+  <!-- Anti-cache -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -24,17 +24,13 @@
       height: 100%;
     }
 
-    /* Vídeo de fundo (estendido) */
     .bg-video {
       position: absolute;
       width: 100%;
       height: 100%;
       object-fit: cover;
-      filter: blur(28px) brightness(0.75);
-      transform: scale(1.25);
     }
 
-    /* Vídeo principal (sem cortar conteúdo) */
     .main-video {
       position: absolute;
       width: 100%;
@@ -47,8 +43,8 @@
 
 <body>
   <div class="container">
-    <video class="bg-video" id="bg" autoplay muted playsinline></video>
-    <video class="main-video" id="main" autoplay muted playsinline></video>
+    <video id="bg" class="bg-video" muted playsinline></video>
+    <video id="main" class="main-video" muted playsinline></video>
   </div>
 
   <script>
@@ -59,25 +55,36 @@
     ];
 
     let indice = 0;
+
     const bg = document.getElementById("bg");
     const main = document.getElementById("main");
 
-    function carregarVideo() {
+    function trocarVideo() {
       const src = videos[indice] + "?v=" + Date.now();
+
       bg.src = src;
       main.src = src;
-      bg.load();
-      main.load();
-      bg.play();
-      main.play();
+
+      bg.currentTime = 0;
+      main.currentTime = 0;
+
+      bg.play().catch(()=>{});
+      main.play().catch(()=>{});
     }
 
-    main.onended = () => {
+    main.addEventListener("ended", () => {
       indice = (indice + 1) % videos.length;
-      carregarVideo();
-    };
+      trocarVideo();
+    });
 
-    carregarVideo();
+    // Inicia
+    trocarVideo();
+
+    // 🔁 AUTO-ATUALIZAÇÃO DA PÁGINA (a cada 10 minutos)
+    setInterval(() => {
+      location.reload(true);
+    }, 10 * 60 * 1000);
   </script>
 </body>
 </html>
+``
