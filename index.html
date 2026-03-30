@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>TV Institucional</title>
 
-  <!-- FORÇAR ATUALIZAÇÃO (ANTI-CACHE) -->
+  <!-- Anti-cache (fundamental para TV Samsung atualizar sempre) -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -12,54 +12,72 @@
   <style>
     html, body {
       margin: 0;
-      padding: 0;
       width: 100%;
       height: 100%;
       background: black;
       overflow: hidden;
     }
 
-    video {
+    .container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Vídeo de fundo (estendido) */
+    .bg-video {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: blur(28px) brightness(0.75);
+      transform: scale(1.25);
+    }
+
+    /* Vídeo principal (sem cortar conteúdo) */
+    .main-video {
+      position: absolute;
       width: 100%;
       height: 100%;
       object-fit: contain;
+      z-index: 2;
     }
   </style>
 </head>
 
 <body>
-
-  <video id="player" autoplay muted playsinline></video>
+  <div class="container">
+    <video class="bg-video" id="bg" autoplay muted playsinline></video>
+    <video class="main-video" id="main" autoplay muted playsinline></video>
+  </div>
 
   <script>
-    // Lista de vídeos
     const videos = [
       "video1.mp4",
-      "video2.mp4"
+      "video2.mp4",
+      "video3.mp4"
     ];
 
     let indice = 0;
-    const player = document.getElementById("player");
+    const bg = document.getElementById("bg");
+    const main = document.getElementById("main");
 
-    // Força atualização do vídeo (anti-cache)
-    function videoComTimestamp(video) {
-      return video + "?v=" + new Date().getTime();
+    function carregarVideo() {
+      const src = videos[indice] + "?v=" + Date.now();
+      bg.src = src;
+      main.src = src;
+      bg.load();
+      main.load();
+      bg.play();
+      main.play();
     }
 
-    function tocarVideo() {
-      player.src = videoComTimestamp(videos[indice]);
-      player.load();
-      player.play();
-    }
-
-    player.onended = () => {
+    main.onended = () => {
       indice = (indice + 1) % videos.length;
-      tocarVideo();
+      carregarVideo();
     };
 
-    tocarVideo();
+    carregarVideo();
   </script>
-
 </body>
 </html>
-``
