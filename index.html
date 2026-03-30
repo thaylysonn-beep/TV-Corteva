@@ -50,10 +50,9 @@
       font-size: 28px;
     }
 
-    #weatherBar iframe {
-      border: none;
-      width: 100%;
+    #weatherBar img {
       height: 100%;
+      width: auto;
     }
   </style>
 </head>
@@ -66,16 +65,11 @@
   </div>
 
   <!-- Faixa de previsão do tempo -->
- <div id="weatherBar">
-  <iframe 
-    src="https://wttr.in/Cosmópolis?format=%c+%t+%C&lang=pt"
-    style="width:100%;height:100%;border:none;">
-  </iframe>
-</div>
-``
-  <script>
-    const videos = [
-      "video1.mp4",
+  <div id="weatherBar">
+    <img 
+      src="https://wttr.in/Cosmópolis.png?format=%c+%t+%C&lang=pt"
+      alt="Previsão do tempo"
+"video1.mp4",
       "video2.mp4"
     ];
 
@@ -102,4 +96,3 @@
 
 </body>
 </html>
-``
