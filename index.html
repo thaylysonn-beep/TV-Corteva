@@ -19,17 +19,23 @@
       overflow: hidden;
     }
 
-    video {
+    video, iframe {
       width: 100%;
       height: 100%;
       object-fit: contain;
+      border: none;
+      display: none;
     }
   </style>
 </head>
 
 <body>
 
+  <!-- Vídeo -->
   <video id="player" autoplay muted playsinline></video>
+
+  <!-- Power BI -->
+  <iframe id="powerbi"></iframe>
 
   <script>
     // Lista de vídeos
@@ -38,8 +44,12 @@
       "video2.mp4"
     ];
 
+    // 🔽 COLE AQUI O LINK DE VISUALIZAÇÃO DO POWER BI
+    const powerBiUrl = "https://app.powerbi.com/groups/ee34ed51-2cab-4114-8f7c-da29d63cd6d5/reports/844b26b7-8c75-49fa-8ee5-471a362b1f3b?ctid=3e20ecb2-9cb0-4df1-ad7b-914e31dcdda4&pbi_source=linkShare";
+
     let indice = 0;
     const player = document.getElementById("player");
+    const powerbi = document.getElementById("powerbi");
 
     // Força atualização do vídeo (anti-cache)
     function videoComTimestamp(video) {
@@ -47,18 +57,40 @@
     }
 
     function tocarVideo() {
+      powerbi.style.display = "none";
+
       player.src = videoComTimestamp(videos[indice]);
+      player.style.display = "block";
       player.load();
-      player.play();
+      player.play().catch(()=>{});
     }
 
-    player.onended = () => {
-      indice = (indice + 1) % videos.length;
-      tocarVideo();
-    };
+    function mostrarPowerBI() {
+      player.pause();
+      player.style.display = "none";
 
+      powerbi.src = powerBiUrl;
+      powerbi.style.display = "block";
+
+      // ⏱ Tempo do Power BI na tela (ex: 30 segundos)
+      setTimeout(() => {
+        indice = 0;
+        tocarVideo();
+      }, 30000);
+    }
+
+    player.addEventListener("ended", () => {
+      indice++;
+      if (indice < videos.length) {
+        tocarVideo();
+      } else {
+        mostrarPowerBI();
+      }
+    });
+
+    // Inicia
     tocarVideo();
-  </script>
 
-</body>
-</html>
+    // 🔁 AUTO-ATUALIZAÇÃO DA PÁGINA (10 minutos)
+    setInterval(() => {
+      location.reload(true);
