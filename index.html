@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>TV Institucional</title>
 
-  <!-- Anti-cache -->
+  <!-- FORÇAR ATUALIZAÇÃO (ANTI-CACHE) -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -19,57 +19,20 @@
       overflow: hidden;
     }
 
-    /* Área do vídeo */
-    #videoContainer {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: calc(100% - 70px);
-    }
-
     video {
       width: 100%;
       height: 100%;
       object-fit: contain;
-      display: block;
-    }
-
-    /* Faixa do clima */
-    #weatherBar {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 70px;
-      background: #0b3a6e;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-
-    #weatherBar img {
-      height: 70px;
-      width: auto;
-      display: block;
     }
   </style>
 </head>
 
 <body>
 
-  <!-- Vídeo -->
-  <div id="videoContainer">
-    <video id="player" autoplay muted playsinline></video>
-  </div>
-
-  <!-- Clima -->
-  <div id="weatherBar">
-    <img src="https://wttr.in/Cosmopolis.png?format=%c+%t&lang=pt">
-  </div>
+  <video id="player" autoplay muted playsinline></video>
 
   <script>
+    // Lista de vídeos
     const videos = [
       "video1.mp4",
       "video2.mp4"
@@ -78,24 +41,24 @@
     let indice = 0;
     const player = document.getElementById("player");
 
+    // Força atualização do vídeo (anti-cache)
     function videoComTimestamp(video) {
-      return video + "?v=" + Date.now();
+      return video + "?v=" + new Date().getTime();
     }
 
     function tocarVideo() {
       player.src = videoComTimestamp(videos[indice]);
-      player.currentTime = 0;
-      player.play().catch(()=>{});
+      player.load();
+      player.play();
     }
 
-    player.addEventListener("ended", () => {
+    player.onended = () => {
       indice = (indice + 1) % videos.length;
       tocarVideo();
-    });
+    };
 
     tocarVideo();
   </script>
 
 </body>
 </html>
-``
