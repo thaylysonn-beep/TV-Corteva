@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>TV Institucional</title>
 
-  <!-- FORÇAR ATUALIZAÇÃO (ANTI-CACHE) -->
+  <!-- ANTI CACHE -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 
   <style>
-    html, body {
+    html,
+    body {
       margin: 0;
       padding: 0;
       width: 100%;
@@ -23,6 +27,7 @@
       width: 100%;
       height: 100%;
       object-fit: contain;
+      background: black;
     }
   </style>
 </head>
@@ -32,33 +37,87 @@
   <video id="player" autoplay muted playsinline></video>
 
   <script>
-    // Lista de vídeos
+
+    // =========================
+    // LISTA DE VÍDEOS
+    // =========================
     const videos = [
       "video1.mp4",
       "video2.mp4"
     ];
 
+    // =========================
+    // CONTROLE
+    // =========================
     let indice = 0;
+
     const player = document.getElementById("player");
 
-    // Força atualização do vídeo (anti-cache)
-    function videoComTimestamp(video) {
-      return video + "?v=" + new Date().getTime();
+    // =========================
+    // GERA URL SEM CACHE
+    // =========================
+    function gerarUrlSemCache(video) {
+
+      // força o navegador buscar novamente
+      return `${video}?nocache=${Date.now()}`;
+
     }
 
+    // =========================
+    // TOCAR VÍDEO
+    // =========================
     function tocarVideo() {
-      player.src = videoComTimestamp(videos[indice]);
+
+      const videoAtual = gerarUrlSemCache(videos[indice]);
+
+      player.src = videoAtual;
+
       player.load();
-      player.play();
+
+      player.play().catch((erro) => {
+        console.log("Erro ao reproduzir:", erro);
+      });
+
     }
 
-    player.onended = () => {
-      indice = (indice + 1) % videos.length;
-      tocarVideo();
-    };
+    // =========================
+    // QUANDO TERMINAR O VIDEO
+    // =========================
+    player.addEventListener("ended", () => {
 
+      indice++;
+
+      if (indice >= videos.length) {
+        indice = 0;
+      }
+
+      tocarVideo();
+
+    });
+
+    // =========================
+    // INICIA
+    // =========================
     tocarVideo();
+
+    // =========================
+    // FORÇA ATUALIZAÇÃO TOTAL
+    // DA PÁGINA A CADA 5 MIN
+    // =========================
+    setInterval(() => {
+
+      // limpa cache do vídeo
+      player.pause();
+      player.removeAttribute("src");
+      player.load();
+
+      // recarrega página
+      window.location.reload(true);
+
+    }, 300000);
+
   </script>
 
 </body>
+
 </html>
