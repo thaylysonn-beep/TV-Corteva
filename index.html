@@ -1,123 +1,75 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<script>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+const videos = [
+  "video1.mp4",
+  "video2.mp4"
+];
 
-  <title>TV Institucional</title>
+let indice = 0;
 
-  <!-- ANTI CACHE -->
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
+const player = document.getElementById("player");
 
-  <style>
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      background: black;
-      overflow: hidden;
-    }
+// versão automática baseada em tempo
+function gerarUrlAtualizada(video) {
 
-    video {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      background: black;
-    }
-  </style>
-</head>
+  // muda a cada 5 minutos
+  const versao = Math.floor(Date.now() / 300000);
 
-<body>
+  return `${video}?v=${versao}`;
 
-  <video id="player" autoplay muted playsinline></video>
+}
 
-  <script>
+function tocarVideo() {
 
-    // =========================
-    // LISTA DE VÍDEOS
-    // =========================
-    const videos = [
-      "video1.mp4",
-      "video2.mp4"
-    ];
+  const videoAtual = gerarUrlAtualizada(videos[indice]);
 
-    // =========================
-    // CONTROLE
-    // =========================
-    let indice = 0;
+  player.src = videoAtual;
 
-    const player = document.getElementById("player");
+  player.load();
 
-    // =========================
-    // GERA URL SEM CACHE
-    // =========================
-    function gerarUrlSemCache(video) {
+  player.play().catch((erro) => {
+    console.log("Erro ao reproduzir:", erro);
+  });
 
-      // força o navegador buscar novamente
-      return `${video}?nocache=${Date.now()}`;
+}
 
-    }
+player.addEventListener("ended", () => {
 
-    // =========================
-    // TOCAR VÍDEO
-    // =========================
-    function tocarVideo() {
+  indice++;
 
-      const videoAtual = gerarUrlSemCache(videos[indice]);
+  if (indice >= videos.length) {
+    indice = 0;
+  }
 
-      player.src = videoAtual;
+  tocarVideo();
 
-      player.load();
+});
 
-      player.play().catch((erro) => {
-        console.log("Erro ao reproduzir:", erro);
-      });
+// caso erro no vídeo
+player.addEventListener("error", () => {
 
-    }
+  console.log("Erro no vídeo.");
 
-    // =========================
-    // QUANDO TERMINAR O VIDEO
-    // =========================
-    player.addEventListener("ended", () => {
+  indice++;
 
-      indice++;
+  if (indice >= videos.length) {
+    indice = 0;
+  }
 
-      if (indice >= videos.length) {
-        indice = 0;
-      }
+  tocarVideo();
 
-      tocarVideo();
+});
 
-    });
+// inicia
+tocarVideo();
 
-    // =========================
-    // INICIA
-    // =========================
-    tocarVideo();
+// atualiza automaticamente a cada 10 minutos
+setInterval(() => {
 
-    // =========================
-    // FORÇA ATUALIZAÇÃO TOTAL
-    // DA PÁGINA A CADA 5 MIN
-    // =========================
-    setInterval(() => {
+  console.log("Atualizando conteúdo...");
 
-      // limpa cache do vídeo
-      player.pause();
-      player.removeAttribute("src");
-      player.load();
+  tocarVideo();
 
-      // recarrega página
-      window.location.reload(true);
+}, 600000);
 
-    }, 300000);
-
-  </script>
-
-</body>
-
-</html>
+</script>
