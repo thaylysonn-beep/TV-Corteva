@@ -2,92 +2,226 @@
 <html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>TV Institucional</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <style>
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      background: black;
-      overflow: hidden;
-    }
+<title>TV Institucional</title>
 
-    video {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      background: black;
-    }
-  </style>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,body{
+
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#000;
+    cursor:none;
+
+}
+
+body{
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+}
+
+video{
+
+    width:100vw;
+    height:100vh;
+    background:#000;
+    object-fit:contain;
+    pointer-events:none;
+    outline:none;
+
+}
+
+/* TVs 4K */
+
+@media (min-width:3000px){
+
+video{
+
+    object-fit:cover;
+
+}
+
+}
+
+</style>
+
 </head>
 
 <body>
 
-  <video id="player" autoplay muted playsinline></video>
+<video
+id="player"
+autoplay
+muted
+playsinline
+webkit-playsinline
+preload="auto"
+disablePictureInPicture
+controlsList="nodownload nofullscreen noplaybackrate noremoteplayback">
+</video>
 
-  <script>
+<script>
 
-    const videos = [
-      "video1.mp4",
-      "video2.mp4"
-    ];
+const videos=[
 
-    let indice = 0;
+"video1.mp4",
+"video2.mp4"
 
-    const player = document.getElementById("player");
+];
 
-    function tocarVideo() {
+let indice=0;
 
-      // adiciona cache leve
-      player.src = videos[indice] + "?v=" + new Date().getMinutes();
+const player=document.getElementById("player");
 
-      player.play();
+player.controls=false;
+player.removeAttribute("controls");
+
+function ajustarTela(){
+
+    if(window.innerWidth>=3000){
+
+        player.style.objectFit="cover";
+
+    }else{
+
+        player.style.objectFit="contain";
 
     }
 
-    // próximo vídeo
-    player.onended = function () {
+}
 
-      indice++;
+function urlSemCache(video){
 
-      if (indice >= videos.length) {
-        indice = 0;
-      }
+    return video+"?v="+Date.now();
 
-      tocarVideo();
+}
 
-    };
+function tocarVideo(){
 
-    // se der erro pula
-    player.onerror = function () {
+    player.pause();
 
-      indice++;
+    player.src=urlSemCache(videos[indice]);
 
-      if (indice >= videos.length) {
-        indice = 0;
-      }
+    player.load();
 
-      tocarVideo();
+    player.play().catch(function(erro){
 
-    };
+        console.log("Erro:",erro);
 
-    // inicia
+        setTimeout(tocarVideo,3000);
+
+    });
+
+}
+
+function proximoVideo(){
+
+    indice++;
+
+    if(indice>=videos.length){
+
+        indice=0;
+
+    }
+
     tocarVideo();
 
-    // atualiza a página inteira a cada 1 hora
-    setInterval(function () {
+}
 
-      location.reload();
+player.addEventListener("ended",proximoVideo);
 
-    }, 3600000);
+player.addEventListener("error",function(){
 
-  </script>
+    console.log("Erro no vídeo.");
+
+    proximoVideo();
+
+});
+
+player.addEventListener("loadedmetadata",function(){
+
+    player.controls=false;
+    player.removeAttribute("controls");
+
+});
+
+window.addEventListener("load",function(){
+
+    ajustarTela();
+
+    tocarVideo();
+
+});
+
+window.addEventListener("resize",ajustarTela);
+
+document.addEventListener("contextmenu",function(e){
+
+    e.preventDefault();
+
+});
+
+document.addEventListener("keydown",function(e){
+
+    e.preventDefault();
+
+});
+
+document.addEventListener("dragstart",function(e){
+
+    e.preventDefault();
+
+});
+
+document.addEventListener("selectstart",function(e){
+
+    e.preventDefault();
+
+});
+
+function entrarTelaCheia(){
+
+    const doc=document.documentElement;
+
+    if(doc.requestFullscreen){
+
+        doc.requestFullscreen();
+
+    }else if(doc.webkitRequestFullscreen){
+
+        doc.webkitRequestFullscreen();
+
+    }
+
+}
+
+setTimeout(entrarTelaCheia,1500);
+
+setInterval(function(){
+
+    location.reload();
+
+},3600000);
+
+</script>
 
 </body>
 
